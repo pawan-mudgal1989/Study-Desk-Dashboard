@@ -1,0 +1,230 @@
+const timeEl = document.querySelector('#time');
+const secondsEl = document.querySelector('#seconds');
+const secondsCards = [...document.querySelectorAll('#seconds .flip-card')];
+const meridiemEl = document.querySelector('#meridiem');
+const dateEl = document.querySelector('#date');
+const monthTitle = document.querySelector('#monthTitle');
+const calendarGrid = document.querySelector('#calendarGrid');
+const weatherCondition = document.querySelector('#weatherCondition');
+const temperature = document.querySelector('#temperature');
+const feelsLike = document.querySelector('#feelsLike');
+const highTemperature = document.querySelector('#highTemperature');
+const lowTemperature = document.querySelector('#lowTemperature');
+const airQuality = document.querySelector('#airQuality');
+const airQualityLabel = document.querySelector('#airQualityLabel');
+const airQualityDot = document.querySelector('#airQualityDot');
+const weatherLocation = document.querySelector('#weatherLocation');
+const weatherCard = document.querySelector('.weather-card');
+const weatherTitle = document.querySelector('.weather-title');
+const sunIcon = document.querySelector('.sun-icon');
+const now = new Date();
+let calendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
+const flipCards = [...document.querySelectorAll('.flip-card')];
+
+function setFlipDigit(card, digit) {
+  const previous = card.dataset.digit;
+  if (previous === digit) return;
+  const top = card.querySelector('.flip-top');
+  const bottom = card.querySelector('.flip-bottom');
+  const leaf = card.querySelector('.flip-leaf');
+  const bottomLeaf = card.querySelector('.flip-bottom-leaf');
+  const setValue = (face, value) => { face.querySelector('.flip-value').textContent = value; };
+
+  // The old upper flap falls away first. At the hinge, the new lower flap rises.
+  setValue(top, digit);
+  setValue(bottom, previous || digit);
+  setValue(leaf, previous || digit);
+  setValue(bottomLeaf, digit);
+  card.dataset.digit = digit;
+  card.classList.remove('flipping', 'bottom-flipping');
+  void card.offsetWidth;
+  card.classList.add('flipping');
+  window.setTimeout(() => {
+    setValue(bottom, digit);
+    card.classList.add('bottom-flipping');
+  }, 290);
+  window.setTimeout(() => {
+    card.classList.remove('flipping', 'bottom-flipping');
+  }, 580);
+}
+
+function prepareFlipCards() {
+  flipCards.forEach((card) => {
+    card.querySelectorAll('.flip-top, .flip-bottom, .flip-leaf, .flip-bottom-leaf').forEach((face) => {
+      const digit = document.createElement('span');
+      digit.className = 'flip-value';
+      digit.textContent = face.textContent;
+      face.textContent = '';
+      face.append(digit);
+    });
+  });
+}
+
+function updateClock() {
+  const date = new Date();
+  const hour = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const clockValue = `${String(hour % 12 || 12).padStart(2, '0')}${minutes}`;
+  timeEl.dateTime = `${String(hour).padStart(2, '0')}:${minutes}`;
+  timeEl.setAttribute('aria-label', `${String(hour % 12 || 12)}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`);
+  clockValue.split('').forEach((digit, index) => setFlipDigit(flipCards[index], digit));
+  secondsEl.dateTime = `PT${seconds}S`;
+  seconds.split('').forEach((digit, index) => setFlipDigit(secondsCards[index], digit));
+  meridiemEl.textContent = hour >= 12 ? 'PM' : 'AM';
+  dateEl.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(date);
+}
+
+function renderCalendar() {
+  const year = calendarDate.getFullYear();
+  const month = calendarDate.getMonth();
+  monthTitle.textContent = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(calendarDate);
+  const firstDay = new Date(year, month, 1);
+  const start = (firstDay.getDay() + 6) % 7;
+  const daysThisMonth = new Date(year, month + 1, 0).getDate();
+  const daysPreviousMonth = new Date(year, month, 0).getDate();
+  calendarGrid.innerHTML = '';
+  const totalCells = start + daysThisMonth > 35 ? 42 : 35;
+  for (let cell = 0; cell < totalCells; cell++) {
+    const day = cell - start + 1;
+    const label = document.createElement('time');
+    if (day < 1) { label.textContent = daysPreviousMonth + day; label.className = 'outside'; }
+    else if (day > daysThisMonth) { label.textContent = day - daysThisMonth; label.className = 'outside'; }
+    else {
+      label.textContent = day;
+      label.dateTime = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      if (year === now.getFullYear() && month === now.getMonth() && day === now.getDate()) label.className = 'today';
+    }
+    calendarGrid.append(label);
+  }
+}
+
+document.querySelector('#previousMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(); });
+document.querySelector('#nextMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(); });
+
+let activeScreen = 0, startX = 0;
+const track = document.querySelector('#screenTrack');
+const dots = [...document.querySelectorAll('.screen-pagination button')];
+function setScreen(index) { activeScreen = Math.max(0, Math.min(1, index)); track.style.transform = `translateX(-${activeScreen * 100}%)`; dots.forEach((dot, i) => dot.classList.toggle('active', i === activeScreen)); }
+dots.forEach((dot, i) => dot.addEventListener('click', () => setScreen(i)));
+window.addEventListener('keydown', event => { if (event.key === 'ArrowRight') setScreen(activeScreen + 1); if (event.key === 'ArrowLeft') setScreen(activeScreen - 1); });
+track.addEventListener('pointerdown', event => { startX = event.clientX; });
+track.addEventListener('pointerup', event => { if (Math.abs(event.clientX - startX) > 60) setScreen(activeScreen + (event.clientX < startX ? 1 : -1)); });
+
+const NEW_DELHI = { latitude: 28.6139, longitude: 77.209, name: 'New Delhi' };
+const WEATHER_CODES = {
+  0: 'Clear Sky', 1: 'Mostly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
+  45: 'Foggy', 48: 'Icy Fog', 51: 'Light Drizzle', 53: 'Drizzle', 55: 'Heavy Drizzle',
+  61: 'Light Rain', 63: 'Rain', 65: 'Heavy Rain', 71: 'Light Snow', 73: 'Snow',
+  75: 'Heavy Snow', 80: 'Rain Showers', 81: 'Rain Showers', 82: 'Heavy Showers',
+  95: 'Thunderstorm', 96: 'Storm with Hail', 99: 'Storm with Hail'
+};
+
+function aqiStatus(value) {
+  if (value <= 50) return 'Good';
+  if (value <= 100) return 'Fair';
+  if (value <= 150) return 'Unhealthy';
+  if (value <= 200) return 'Poor';
+  return 'Very Poor';
+}
+
+function renderWeatherSymbol(code, isDay) {
+  const cloudy = [2, 3, 45, 48].includes(code);
+  const wet = code >= 51;
+  if (wet) {
+    sunIcon.innerHTML = '<path d="M32 43c3-13 14-22 28-22 16 0 29 13 29 29 10 1 18 9 18 20 0 12-9 21-21 21H33c-12 0-21-9-21-21 0-14 10-25 23-27Z" fill="#92aabd" opacity=".9"/><path d="m42 98-5 12m25-12-5 12m25-12-5 12" stroke="#8bc9ec" stroke-width="5" stroke-linecap="round"/>';
+  } else if (!isDay) {
+    sunIcon.innerHTML = '<path d="M74 19a35 35 0 1 0 28 52A31 31 0 1 1 74 19Z" fill="#f3dd96"/><circle cx="91" cy="27" r="3" fill="#fff7d4"/><circle cx="102" cy="43" r="2" fill="#fff7d4"/>';
+  } else if (cloudy) {
+    sunIcon.innerHTML = '<circle cx="48" cy="43" r="23" fill="#ffd35e"/><path d="M36 90c-13 0-23-10-23-23s10-23 23-23c3-13 14-22 28-22 16 0 29 13 29 29 10 1 18 9 18 20 0 11-9 19-20 19H36Z" fill="#c6d1d9" opacity=".95"/>';
+  } else {
+    sunIcon.innerHTML = '<g stroke="#ffd15c" stroke-width="5" stroke-linecap="round"><path d="M60 8v14"/><path d="M60 98v14"/><path d="M8 60h14"/><path d="M98 60h14"/><path d="m23 23 10 10"/><path d="m87 87 10 10"/><path d="m97 23-10 10"/><path d="m33 87-10 10"/></g><circle cx="60" cy="60" r="30" fill="#ffd15c"/>';
+  }
+}
+
+async function loadLiveWeather(location = NEW_DELHI) {
+  const weatherUrl = new URL('https://api.open-meteo.com/v1/forecast');
+  weatherUrl.search = new URLSearchParams({
+    latitude: location.latitude, longitude: location.longitude, timezone: 'auto',
+    current: 'temperature_2m,apparent_temperature,weather_code,is_day',
+    daily: 'temperature_2m_max,temperature_2m_min', forecast_days: '1'
+  });
+  const airUrl = new URL('https://air-quality-api.open-meteo.com/v1/air-quality');
+  airUrl.search = new URLSearchParams({ latitude: location.latitude, longitude: location.longitude, current: 'us_aqi' });
+
+  try {
+    const [weatherResponse, airResponse] = await Promise.all([fetch(weatherUrl), fetch(airUrl)]);
+    if (!weatherResponse.ok || !airResponse.ok) throw new Error('Weather service unavailable');
+    const [weather, air] = await Promise.all([weatherResponse.json(), airResponse.json()]);
+    const current = weather.current;
+    const aqi = Math.round(air.current.us_aqi);
+    temperature.textContent = `${Math.round(current.temperature_2m)}°C`;
+    feelsLike.textContent = `Feels like ${Math.round(current.apparent_temperature)}°`;
+    weatherCondition.textContent = WEATHER_CODES[current.weather_code] || 'Current Conditions';
+    renderWeatherSymbol(current.weather_code, current.is_day);
+    highTemperature.textContent = `${Math.round(weather.daily.temperature_2m_max[0])}°`;
+    lowTemperature.textContent = `${Math.round(weather.daily.temperature_2m_min[0])}°`;
+    airQuality.textContent = aqi;
+    airQualityLabel.textContent = aqiStatus(aqi);
+    airQualityDot.style.background = aqi <= 100 ? '#9ed88f' : aqi <= 150 ? '#edc45d' : '#eb8b76';
+  } catch (error) {
+    weatherCondition.textContent = 'Unable to update';
+    feelsLike.textContent = 'Check your connection';
+  }
+}
+
+let activeWeatherLocation = NEW_DELHI;
+const weatherLocationIcon = weatherTitle.querySelector('.pin');
+
+async function getLocationName({ latitude, longitude }) {
+  const url = new URL('https://api.bigdatacloud.net/data/reverse-geocode-client');
+  url.search = new URLSearchParams({ latitude, longitude, localityLanguage: 'en' });
+  const response = await fetch(url);
+  if (!response.ok) throw new Error('City lookup unavailable');
+  const place = await response.json();
+  return place.city || place.locality || place.principalSubdivision || 'Your location';
+}
+
+function displayLocation(location) {
+  weatherLocation.textContent = location.name || 'Your location';
+  if (weatherLocationIcon) weatherLocationIcon.textContent = '🧭';
+  weatherCard.setAttribute('aria-label', `Live weather at ${weatherLocation.textContent}`);
+}
+
+function useSavedLocation() {
+  const saved = localStorage.getItem('focus-dashboard-location');
+  if (!saved) return false;
+  const location = JSON.parse(saved);
+  displayLocation(location);
+  activeWeatherLocation = location;
+  return true;
+}
+
+if (!useSavedLocation()) {
+  const locationButton = document.createElement('button');
+  locationButton.type = 'button';
+  locationButton.textContent = '⌖';
+  locationButton.title = 'Use my location';
+  locationButton.setAttribute('aria-label', 'Use my location for weather');
+  locationButton.style.cssText = 'margin-left:auto;border:0;background:transparent;color:inherit;font:inherit;font-size:18px;cursor:pointer;padding:0 2px;opacity:.85';
+  weatherTitle.append(locationButton);
+  locationButton.addEventListener('click', () => {
+  if (!navigator.geolocation) { weatherCondition.textContent = 'Location unavailable'; return; }
+  weatherCondition.textContent = 'Finding your location…';
+  navigator.geolocation.getCurrentPosition(
+    async ({ coords }) => {
+      const location = { latitude: coords.latitude, longitude: coords.longitude };
+      try { location.name = await getLocationName(location); } catch { location.name = 'Your location'; }
+      localStorage.setItem('focus-dashboard-location', JSON.stringify(location));
+      activeWeatherLocation = location;
+      locationButton.remove();
+      displayLocation(location);
+      loadLiveWeather(location);
+    },
+    () => { weatherCondition.textContent = 'Location permission denied'; },
+    { enableHighAccuracy: false, timeout: 10000, maximumAge: 900000 }
+  );
+  });
+}
+
+prepareFlipCards(); updateClock(); renderCalendar(); loadLiveWeather(activeWeatherLocation); setInterval(updateClock, 1000); setInterval(() => loadLiveWeather(activeWeatherLocation), 20 * 60 * 1000);

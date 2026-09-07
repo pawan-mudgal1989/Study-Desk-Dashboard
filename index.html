@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#07121d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Focus" />
+    <title>Focus Dashboard</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css?v=flip-clock-v4" />
+  </head>
+  <body>
+    <main class="dashboard" aria-label="Focus dashboard">
+      <div class="background" aria-hidden="true"></div>
+      <div class="shade" aria-hidden="true"></div>
+
+      <div class="screen-track" id="screenTrack">
+        <section class="screen home-screen" aria-label="Home screen">
+          <section class="focus-copy" aria-label="Date and motivation">
+            <p class="eyebrow">A focused mind<br />builds an extraordinary life.</p>
+            <span class="accent-line"></span>
+            <div class="time-row">
+              <time id="time" class="flip-clock" aria-label="Current time">
+                <span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-separator" aria-hidden="true">:</span>
+                <span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+              </time>
+              <span class="meridiem-stack"><time id="seconds" class="seconds-card" aria-label="Seconds"><span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span><span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span></time><span id="meridiem">PM</span></span>
+            </div>
+            <p class="date" id="date">Sunday, 6 September</p>
+            <blockquote>“A focused mind<br />builds an extraordinary life.”</blockquote>
+            <span class="accent-line quote-line"></span>
+            <p class="values">Focus <i></i> Discipline <i></i> Progress</p>
+          </section>
+
+          <aside class="widgets" aria-label="Weather and calendar">
+            <section class="glass-card weather-card" aria-label="Live weather in New Delhi">
+              <div class="weather-title"><span class="pin" aria-hidden="true">⌖</span><span id="weatherLocation">New Delhi</span><small id="weatherCondition">Loading weather…</small></div>
+              <div class="weather-main">
+                <svg class="sun-icon" viewBox="0 0 120 120" aria-hidden="true">
+                  <defs><radialGradient id="sunGlow"><stop stop-color="#ffe798"/><stop offset=".72" stop-color="#ffd15c"/><stop offset="1" stop-color="#f6b93e"/></radialGradient></defs>
+                  <g stroke="#ffd15c" stroke-width="5" stroke-linecap="round" opacity=".95"><path d="M60 8v14"/><path d="M60 98v14"/><path d="M8 60h14"/><path d="M98 60h14"/><path d="m23 23 10 10"/><path d="m87 87 10 10"/><path d="m97 23-10 10"/><path d="m33 87-10 10"/></g>
+                  <circle cx="60" cy="60" r="30" fill="url(#sunGlow)"/><circle cx="50" cy="49" r="14" fill="#fff2bd" opacity=".18"/>
+                </svg>
+                <div><strong id="temperature">--°</strong><p id="feelsLike">Fetching live data</p></div>
+                <dl><div><dt>H</dt><dd id="highTemperature">--°</dd></div><div><dt>L</dt><dd id="lowTemperature">--°</dd></div><div><dt>AQI</dt><dd id="airQuality">--</dd></div><div><dt id="airQualityLabel">—</dt><dd class="status-dot" id="airQualityDot"></dd></div></dl>
+              </div>
+            </section>
+
+            <section class="glass-card calendar-card" aria-label="September 2026 calendar">
+              <header><h1 id="monthTitle">September 2026</h1><div class="month-actions"><button type="button" id="previousMonth" aria-label="Previous month">‹</button><button type="button" id="nextMonth" aria-label="Next month">›</button></div></header>
+              <div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="screen future-screen" aria-label="Future screen placeholder">
+          <p>Next screen</p><span>Ready for the next view.</span>
+        </section>
+      </div>
+
+      <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Home screen"></button><button aria-label="Next screen"></button></div>
+    </main>
+    <script src="app.js?v=flip-clock-v4"></script>
+    <script>
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
+    </script>
+  </body>
+</html>
