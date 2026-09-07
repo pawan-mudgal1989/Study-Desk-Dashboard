@@ -16,6 +16,9 @@
     <main class="dashboard" aria-label="Focus dashboard">
       <div class="background" aria-hidden="true"></div>
       <div class="shade" aria-hidden="true"></div>
+      <button class="wallpaper-shuffle" id="wallpaperShuffle" type="button" aria-label="Change wallpaper" title="Change wallpaper">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h2.5c1.7 0 2.6.6 3.6 2.1l1.8 2.8c1 1.5 1.9 2.1 3.6 2.1H20M17 11l3 3-3 3M4 17h2.5c1.7 0 2.6-.6 3.6-2.1l.8-1.2M15.5 7H20m-3 3 3-3-3-3" /></svg>
+      </button>
 
       <div class="screen-track" id="screenTrack">
         <section class="screen home-screen" aria-label="Home screen">
@@ -33,9 +36,24 @@
               <span class="meridiem-stack"><time id="seconds" class="seconds-card" aria-label="Seconds"><span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span><span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span></time><span id="meridiem">PM</span></span>
             </div>
             <p class="date" id="date">Sunday, 6 September</p>
-            <blockquote>“A focused mind<br />builds an extraordinary life.”</blockquote>
-            <span class="accent-line quote-line"></span>
-            <p class="values">Focus <i></i> Discipline <i></i> Progress</p>
+            <section class="world-clocks" aria-label="World clocks">
+              <article class="world-clock" data-time-zone="Australia/Sydney">
+                <div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div>
+                <div><strong>Sydney</strong><time>--:--</time></div>
+              </article>
+              <article class="world-clock" data-time-zone="America/New_York">
+                <div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div>
+                <div><strong>New York</strong><time>--:--</time></div>
+              </article>
+              <article class="world-clock" data-time-zone="Europe/London">
+                <div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div>
+                <div><strong>London</strong><time>--:--</time></div>
+              </article>
+              <article class="world-clock" data-time-zone="Asia/Dubai">
+                <div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div>
+                <div><strong>Dubai</strong><time>--:--</time></div>
+              </article>
+            </section>
           </section>
 
           <aside class="widgets" aria-label="Weather and calendar">

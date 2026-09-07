@@ -17,9 +17,55 @@ const weatherLocation = document.querySelector('#weatherLocation');
 const weatherCard = document.querySelector('.weather-card');
 const weatherTitle = document.querySelector('.weather-title');
 const sunIcon = document.querySelector('.sun-icon');
+const background = document.querySelector('.background');
+const wallpaperShuffle = document.querySelector('#wallpaperShuffle');
 const now = new Date();
 let calendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
 const flipCards = [...document.querySelectorAll('.flip-card')];
+const worldClockCards = [...document.querySelectorAll('.world-clock')];
+
+const WALLPAPERS = {
+  morning: [
+    'assets/wallpaper-morning-01.png',
+    'assets/wallpaper-morning-02.png',
+    'assets/wallpaper-morning-03.png',
+    'assets/wallpaper-morning-04.png'
+  ],
+  afternoon: [
+    'assets/wallpaper-afternoon-01.png',
+    'assets/wallpaper-afternoon-02.png',
+    'assets/wallpaper-afternoon-03.png',
+    'assets/wallpaper-afternoon-04.png'
+  ],
+  evening: [
+    'assets/wallpaper-evening-01.png',
+    'assets/wallpaper-evening-02.png',
+    'assets/wallpaper-evening-03.png',
+    'assets/wallpaper-evening-04.png'
+  ],
+  night: [
+    'assets/wallpaper-night-01.png',
+    'assets/wallpaper-night-02.png',
+    'assets/wallpaper-night-03.png',
+    'assets/wallpaper-night-04.png'
+  ]
+};
+
+let activeWallpaperPeriod = '';
+let activeWallpaper = '';
+
+function setTimeAwareWallpaper(force = false) {
+  const hour = new Date().getHours();
+  const period = hour >= 5 && hour < 11 ? 'morning' : hour < 16 ? 'afternoon' : hour < 20 ? 'evening' : 'night';
+  if (!force && period === activeWallpaperPeriod) return;
+  const choices = WALLPAPERS[period];
+  const alternatives = choices.filter((wallpaper) => wallpaper !== activeWallpaper);
+  const wallpaper = (alternatives.length ? alternatives : choices)[Math.floor(Math.random() * (alternatives.length || choices.length))];
+  background.style.setProperty('--wallpaper', `url("${wallpaper}")`);
+  background.setAttribute('data-period', period);
+  activeWallpaperPeriod = period;
+  activeWallpaper = wallpaper;
+}
 
 function setFlipDigit(card, digit) {
   const previous = card.dataset.digit;
@@ -60,6 +106,42 @@ function prepareFlipCards() {
   });
 }
 
+function prepareWorldClockFaces() {
+  worldClockCards.forEach((card) => {
+    const face = card.querySelector('.analog-face');
+    for (let hour = 1; hour <= 12; hour++) {
+      const angle = (hour * 30 - 90) * Math.PI / 180;
+      const number = document.createElement('span');
+      number.className = 'clock-number';
+      number.textContent = hour;
+      number.style.left = `${50 + Math.cos(angle) * 35}%`;
+      number.style.top = `${50 + Math.sin(angle) * 35}%`;
+      face.append(number);
+    }
+  });
+}
+
+function getTimeInZone(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h12'
+  }).formatToParts(date);
+  return Object.fromEntries(parts.filter(({ type }) => type !== 'literal').map(({ type, value }) => [type, type === 'dayPeriod' ? value : Number(value)]));
+}
+
+function updateWorldClocks(date) {
+  worldClockCards.forEach((card) => {
+    const { hour, minute, second, dayPeriod } = getTimeInZone(date, card.dataset.timeZone);
+    card.querySelector('time').textContent = `${hour}:${String(minute).padStart(2, '0')} ${dayPeriod.toUpperCase()}`;
+    card.querySelector('.hour-hand').style.setProperty('--angle', `${(hour % 12) * 30 + minute * .5}deg`);
+    card.querySelector('.minute-hand').style.setProperty('--angle', `${minute * 6 + second * .1}deg`);
+    card.querySelector('.second-hand').style.setProperty('--angle', `${second * 6}deg`);
+  });
+}
+
 function updateClock() {
   const date = new Date();
   const hour = date.getHours();
@@ -73,6 +155,7 @@ function updateClock() {
   seconds.split('').forEach((digit, index) => setFlipDigit(secondsCards[index], digit));
   meridiemEl.textContent = hour >= 12 ? 'PM' : 'AM';
   dateEl.textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(date);
+  updateWorldClocks(date);
 }
 
 function renderCalendar() {
@@ -227,4 +310,5 @@ if (!useSavedLocation()) {
   });
 }
 
-prepareFlipCards(); updateClock(); renderCalendar(); loadLiveWeather(activeWeatherLocation); setInterval(updateClock, 1000); setInterval(() => loadLiveWeather(activeWeatherLocation), 20 * 60 * 1000);
+setTimeAwareWallpaper(); prepareFlipCards(); prepareWorldClockFaces(); updateClock(); renderCalendar(); loadLiveWeather(activeWeatherLocation); setInterval(updateClock, 1000); setInterval(setTimeAwareWallpaper, 60 * 1000); setInterval(() => loadLiveWeather(activeWeatherLocation), 20 * 60 * 1000);
+wallpaperShuffle.addEventListener('click', () => setTimeAwareWallpaper(true));
