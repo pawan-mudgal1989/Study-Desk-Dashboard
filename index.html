@@ -10,7 +10,7 @@
     <title>Focus Dashboard</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=focus-screen-v19" />
+    <link rel="stylesheet" href="styles.css?v=focus-screen-v24" />
   </head>
   <body>
     <main class="dashboard" aria-label="Focus dashboard">
@@ -21,6 +21,27 @@
       </button>
 
       <div class="screen-track" id="screenTrack">
+        <section class="screen full-clock-screen" aria-label="Full clock screen">
+          <section class="full-clock-main" aria-label="Current time">
+            <div class="full-time-row">
+              <time id="fullTime" class="flip-clock full-flip-clock" aria-label="Current time">
+                <span class="flip-card full-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-card full-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-separator" aria-hidden="true">:</span>
+                <span class="flip-card full-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-card full-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+              </time>
+            </div>
+          </section>
+
+          <section class="hero-world-clocks" aria-label="World clocks">
+            <article class="world-clock" data-time-zone="Australia/Sydney"><div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div><div><strong>Sydney</strong><time>--:--</time></div></article>
+            <article class="world-clock" data-time-zone="America/New_York"><div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div><div><strong>New York</strong><time>--:--</time></div></article>
+            <article class="world-clock" data-time-zone="Europe/London"><div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div><div><strong>London</strong><time>--:--</time></div></article>
+            <article class="world-clock" data-time-zone="Asia/Dubai"><div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div><div><strong>Dubai</strong><time>--:--</time></div></article>
+          </section>
+        </section>
+
         <section class="screen home-screen" aria-label="Home screen">
           <section class="focus-copy" aria-label="Date and motivation">
             <p class="eyebrow" id="dailyQuote" aria-live="polite">A focused mind<br />builds an extraordinary life.</p>
@@ -134,9 +155,9 @@
         </section>
       </div>
 
-      <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Home screen"></button><button aria-label="Today and focus screen"></button></div>
+      <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Full clock screen"></button><button aria-label="Home screen"></button><button aria-label="Today and focus screen"></button></div>
     </main>
-    <script src="app.js?v=focus-screen-v19"></script>
+    <script src="app.js?v=focus-screen-v24"></script>
     <script>
       if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
     </script>

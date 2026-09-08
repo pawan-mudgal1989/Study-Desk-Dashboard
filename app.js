@@ -3,6 +3,8 @@ const secondsEl = document.querySelector('#seconds');
 const secondsCards = [...document.querySelectorAll('#seconds .flip-card')];
 const meridiemEl = document.querySelector('#meridiem');
 const dateEl = document.querySelector('#date');
+const fullTimeEl = document.querySelector('#fullTime');
+const fullFlipCards = [...document.querySelectorAll('#fullTime .flip-card')];
 const monthTitle = document.querySelector('#monthTitle');
 const calendarGrid = document.querySelector('#calendarGrid');
 const weatherCondition = document.querySelector('#weatherCondition');
@@ -38,7 +40,8 @@ const timelineTimeInputs = [...document.querySelectorAll('[data-timeline-time]')
 const timelineTextInputs = [...document.querySelectorAll('[data-timeline-text]')];
 const now = new Date();
 let calendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
-const flipCards = [...document.querySelectorAll('.flip-card')];
+const flipCards = [...document.querySelectorAll('#time .flip-card')];
+const allFlipCards = [...document.querySelectorAll('.flip-card')];
 const worldClockCards = [...document.querySelectorAll('.world-clock')];
 
 const WALLPAPERS = {
@@ -242,7 +245,7 @@ function setFlipDigit(card, digit) {
 }
 
 function prepareFlipCards() {
-  flipCards.forEach((card) => {
+  allFlipCards.forEach((card) => {
     card.querySelectorAll('.flip-top, .flip-bottom, .flip-leaf, .flip-bottom-leaf').forEach((face) => {
       const digit = document.createElement('span');
       digit.className = 'flip-value';
@@ -298,6 +301,9 @@ function updateClock() {
   timeEl.dateTime = `${String(hour).padStart(2, '0')}:${minutes}`;
   timeEl.setAttribute('aria-label', `${String(hour % 12 || 12)}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`);
   clockValue.split('').forEach((digit, index) => setFlipDigit(flipCards[index], digit));
+  fullTimeEl.dateTime = `${String(hour).padStart(2, '0')}:${minutes}`;
+  fullTimeEl.setAttribute('aria-label', `${String(hour % 12 || 12)}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`);
+  clockValue.split('').forEach((digit, index) => setFlipDigit(fullFlipCards[index], digit));
   compactTime.dateTime = `${String(hour).padStart(2, '0')}:${minutes}`;
   compactTime.setAttribute('aria-label', `${String(hour % 12 || 12)}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`);
   clockValue.split('').forEach((digit, index) => setFlipDigit(compactFlipCards[index], digit));
@@ -338,8 +344,9 @@ document.querySelector('#nextMonth').addEventListener('click', () => { calendarD
 
 let activeScreen = 0, startX = 0;
 const track = document.querySelector('#screenTrack');
+const screens = [...track.querySelectorAll('.screen')];
 const dots = [...document.querySelectorAll('.screen-pagination button')];
-function setScreen(index) { activeScreen = Math.max(0, Math.min(1, index)); track.style.transform = `translateX(-${activeScreen * 100}%)`; dots.forEach((dot, i) => dot.classList.toggle('active', i === activeScreen)); }
+function setScreen(index) { activeScreen = Math.max(0, Math.min(screens.length - 1, index)); track.style.transform = `translateX(-${activeScreen * 100}%)`; dots.forEach((dot, i) => dot.classList.toggle('active', i === activeScreen)); }
 dots.forEach((dot, i) => dot.addEventListener('click', () => setScreen(i)));
 window.addEventListener('keydown', event => { if (event.key === 'ArrowRight') setScreen(activeScreen + 1); if (event.key === 'ArrowLeft') setScreen(activeScreen - 1); });
 track.addEventListener('pointerdown', event => { startX = event.clientX; });
