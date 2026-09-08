@@ -10,7 +10,7 @@
     <title>Focus Dashboard</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=focus-screen-v24" />
+    <link rel="stylesheet" href="styles.css?v=focus-screen-v26" />
   </head>
   <body>
     <main class="dashboard" aria-label="Focus dashboard">
@@ -21,6 +21,16 @@
       </button>
 
       <div class="screen-track" id="screenTrack">
+        <section class="screen solo-clock-screen" aria-label="Clock screen">
+          <time id="soloTime" class="flip-clock solo-flip-clock" aria-label="Current time">
+            <span class="flip-card solo-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+            <span class="flip-card solo-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+            <span class="flip-separator" aria-hidden="true">:</span>
+            <span class="flip-card solo-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+            <span class="flip-card solo-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+          </time>
+        </section>
+
         <section class="screen full-clock-screen" aria-label="Full clock screen">
           <section class="full-clock-main" aria-label="Current time">
             <div class="full-time-row">
@@ -155,9 +165,9 @@
         </section>
       </div>
 
-      <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Full clock screen"></button><button aria-label="Home screen"></button><button aria-label="Today and focus screen"></button></div>
+      <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Clock screen"></button><button aria-label="Full clock screen"></button><button aria-label="Home screen"></button><button aria-label="Today and focus screen"></button></div>
     </main>
-    <script src="app.js?v=focus-screen-v24"></script>
+    <script src="app.js?v=focus-screen-v26"></script>
     <script>
       if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
     </script>
