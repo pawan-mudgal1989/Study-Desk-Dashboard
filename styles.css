@@ -13,7 +13,7 @@ body { margin:0; overflow:hidden; background:#07121d; color:var(--ink); font-fam
 .screen { min-width:100%; position:relative; padding:clamp(20px,4vh,56px) clamp(30px,4.6vw,80px); }
 .home-screen { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(370px,1fr); gap:clamp(30px,5vw,96px); align-items:center; }
 .focus-copy { height:min(82vh,850px); display:flex; flex-direction:column; justify-content:center; padding-left:clamp(0px,1.2vw,24px); text-shadow:0 2px 18px rgba(0,0,0,.25); }
-.eyebrow { margin:0; text-transform:uppercase; letter-spacing:.32em; font-size:clamp(10px,.85vw,15px); line-height:1.85; color:rgba(255,255,255,.76); }
+.eyebrow { margin:0; white-space:pre-line; text-transform:uppercase; letter-spacing:.32em; font-size:clamp(10px,.85vw,15px); line-height:1.85; color:rgba(255,255,255,.76); }
 .accent-line { width:44px; height:2px; margin:28px 0 48px; display:block; background:var(--gold); box-shadow:0 0 16px rgba(245,200,92,.36); }
 .time-row { display:flex; align-items:flex-end; gap:clamp(13px,1.5vw,24px); }
 .flip-clock { display:flex; align-items:center; gap:clamp(5px,.65vw,12px); line-height:1; }

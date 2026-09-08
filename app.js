@@ -19,6 +19,7 @@ const weatherTitle = document.querySelector('.weather-title');
 const sunIcon = document.querySelector('.sun-icon');
 const background = document.querySelector('.background');
 const wallpaperShuffle = document.querySelector('#wallpaperShuffle');
+const dailyQuote = document.querySelector('#dailyQuote');
 const now = new Date();
 let calendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
 const flipCards = [...document.querySelectorAll('.flip-card')];
@@ -51,8 +52,43 @@ const WALLPAPERS = {
   ]
 };
 
+const DAILY_REFLECTIONS = [
+  'A focused mind\nbuilds an extraordinary life.',
+  'Protect the hour\nthat protects your future.',
+  'Small promises kept\nbecome a strong life.',
+  'Attention is the beginning\nof every meaningful result.',
+  'Begin before you feel\ncompletely ready.',
+  'Discipline makes room\nfor the life you want.',
+  'One honest hour\ncan change the shape of a day.',
+  'Let consistency speak\nlouder than motivation.',
+  'Quiet progress\nis still progress.',
+  'Your focus is a vote\nfor what matters most.',
+  'Make the next action\nsimple enough to begin now.',
+  'A calm mind can carry\na great ambition.',
+  'Do less, with\nmore intention.',
+  'The habit you return to\nbecomes your direction.',
+  'There is strength in\nfinishing the small things.',
+  'Build the day you will be\nproud to repeat.',
+  'Your future is shaped by\nordinary focused moments.',
+  'Patience turns effort\ninto mastery.',
+  'Progress asks for presence,\nnot perfection.',
+  'Keep the promise you made\nto yourself this morning.',
+  'The best momentum\nis earned in silence.',
+  'Give important work\nyour first attention.',
+  'Choose depth\nover noise.',
+  'Let today be useful,\nnot merely busy.',
+  'Your standards appear in\nyour smallest choices.',
+  'A meaningful life is built\none deliberate day at a time.',
+  'Focus is a decision made\nagain and again.',
+  'Make room for the work\nthat matters.',
+  'Steady effort\nchanges everything.',
+  'Finish today knowing\nyou moved something forward.',
+  'Clarity grows when\ndistractions lose their place.'
+];
+
 let activeWallpaperPeriod = '';
 let activeWallpaper = '';
+let activeQuoteDate = '';
 
 function setTimeAwareWallpaper(force = false) {
   const hour = new Date().getHours();
@@ -65,6 +101,16 @@ function setTimeAwareWallpaper(force = false) {
   background.setAttribute('data-period', period);
   activeWallpaperPeriod = period;
   activeWallpaper = wallpaper;
+}
+
+function renderDailyQuote() {
+  const date = new Date();
+  const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  if (dateKey === activeQuoteDate) return;
+  const startOfYear = new Date(date.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((date - startOfYear) / 86400000);
+  dailyQuote.textContent = DAILY_REFLECTIONS[(date.getFullYear() + dayOfYear) % DAILY_REFLECTIONS.length];
+  activeQuoteDate = dateKey;
 }
 
 function setFlipDigit(card, digit) {
@@ -310,5 +356,5 @@ if (!useSavedLocation()) {
   });
 }
 
-setTimeAwareWallpaper(); prepareFlipCards(); prepareWorldClockFaces(); updateClock(); renderCalendar(); loadLiveWeather(activeWeatherLocation); setInterval(updateClock, 1000); setInterval(setTimeAwareWallpaper, 60 * 1000); setInterval(() => loadLiveWeather(activeWeatherLocation), 20 * 60 * 1000);
+setTimeAwareWallpaper(); renderDailyQuote(); prepareFlipCards(); prepareWorldClockFaces(); updateClock(); renderCalendar(); loadLiveWeather(activeWeatherLocation); setInterval(updateClock, 1000); setInterval(setTimeAwareWallpaper, 60 * 1000); setInterval(renderDailyQuote, 60 * 1000); setInterval(() => loadLiveWeather(activeWeatherLocation), 20 * 60 * 1000);
 wallpaperShuffle.addEventListener('click', () => setTimeAwareWallpaper(true));
