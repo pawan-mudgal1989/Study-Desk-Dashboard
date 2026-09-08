@@ -351,8 +351,10 @@ let activeScreen = 0, startX = 0;
 const track = document.querySelector('#screenTrack');
 const screens = [...track.querySelectorAll('.screen')];
 const dots = [...document.querySelectorAll('.screen-pagination button')];
-function setScreen(index) { activeScreen = Math.max(0, Math.min(screens.length - 1, index)); track.style.transform = `translateX(-${activeScreen * 100}%)`; dots.forEach((dot, i) => dot.classList.toggle('active', i === activeScreen)); }
+const screenShortcuts = [...document.querySelectorAll('.screen-shortcuts button')];
+function setScreen(index) { activeScreen = Math.max(0, Math.min(screens.length - 1, index)); track.style.transform = `translateX(-${activeScreen * 100}%)`; dots.forEach((dot, i) => dot.classList.toggle('active', i === activeScreen)); screenShortcuts.forEach((button, i) => button.classList.toggle('active', i === activeScreen)); }
 dots.forEach((dot, i) => dot.addEventListener('click', () => setScreen(i)));
+screenShortcuts.forEach((button, i) => button.addEventListener('click', () => setScreen(i)));
 window.addEventListener('keydown', event => { if (event.key === 'ArrowRight') setScreen(activeScreen + 1); if (event.key === 'ArrowLeft') setScreen(activeScreen - 1); });
 track.addEventListener('pointerdown', event => { startX = event.clientX; });
 track.addEventListener('pointerup', event => { if (Math.abs(event.clientX - startX) > 60) setScreen(activeScreen + (event.clientX < startX ? 1 : -1)); });

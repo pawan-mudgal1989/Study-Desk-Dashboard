@@ -10,7 +10,7 @@
     <title>Focus Dashboard</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=focus-screen-v26" />
+    <link rel="stylesheet" href="styles.css?v=focus-screen-v27" />
   </head>
   <body>
     <main class="dashboard" aria-label="Focus dashboard">
@@ -19,6 +19,12 @@
       <button class="wallpaper-shuffle" id="wallpaperShuffle" type="button" aria-label="Change wallpaper" title="Change wallpaper">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h2.5c1.7 0 2.6.6 3.6 2.1l1.8 2.8c1 1.5 1.9 2.1 3.6 2.1H20M17 11l3 3-3 3M4 17h2.5c1.7 0 2.6-.6 3.6-2.1l.8-1.2M15.5 7H20m-3 3 3-3-3-3" /></svg>
       </button>
+      <nav class="screen-shortcuts" aria-label="Jump to dashboard screen">
+        <button class="active" type="button" aria-label="Open clock screen">1</button>
+        <button type="button" aria-label="Open full clock screen">2</button>
+        <button type="button" aria-label="Open home screen">3</button>
+        <button type="button" aria-label="Open focus screen">4</button>
+      </nav>
 
       <div class="screen-track" id="screenTrack">
         <section class="screen solo-clock-screen" aria-label="Clock screen">
@@ -167,7 +173,7 @@
 
       <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Clock screen"></button><button aria-label="Full clock screen"></button><button aria-label="Home screen"></button><button aria-label="Today and focus screen"></button></div>
     </main>
-    <script src="app.js?v=focus-screen-v26"></script>
+    <script src="app.js?v=focus-screen-v27"></script>
     <script>
       if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
     </script>
