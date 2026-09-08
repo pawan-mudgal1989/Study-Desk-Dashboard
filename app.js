@@ -20,6 +20,22 @@ const sunIcon = document.querySelector('.sun-icon');
 const background = document.querySelector('.background');
 const wallpaperShuffle = document.querySelector('#wallpaperShuffle');
 const dailyQuote = document.querySelector('#dailyQuote');
+const focusTimer = document.querySelector('#focusTimer');
+const timerRing = document.querySelector('#timerRing');
+const timerToggle = document.querySelector('#timerToggle');
+const timerReset = document.querySelector('#timerReset');
+const focusTitle = document.querySelector('#focusTitle');
+const priorityCheckboxes = [...document.querySelectorAll('[data-priority]')];
+const priorityInputs = [...document.querySelectorAll('[data-priority-text]')];
+const priorityCount = document.querySelector('#priorityCount');
+const progressLabel = document.querySelector('#progressLabel');
+const progressFill = document.querySelector('#progressFill');
+const compactTime = document.querySelector('#compactTime');
+const compactMeridiem = document.querySelector('#compactMeridiem');
+const compactFlipCards = [...document.querySelectorAll('.compact-flip-card')];
+const timerPresetButtons = [...document.querySelectorAll('[data-timer-preset]')];
+const timelineTimeInputs = [...document.querySelectorAll('[data-timeline-time]')];
+const timelineTextInputs = [...document.querySelectorAll('[data-timeline-text]')];
 const now = new Date();
 let calendarDate = new Date(now.getFullYear(), now.getMonth(), 1);
 const flipCards = [...document.querySelectorAll('.flip-card')];
@@ -89,6 +105,11 @@ const DAILY_REFLECTIONS = [
 let activeWallpaperPeriod = '';
 let activeWallpaper = '';
 let activeQuoteDate = '';
+const DEFAULT_FOCUS_DURATION = 50 * 60;
+let focusDuration = DEFAULT_FOCUS_DURATION;
+let focusSeconds = focusDuration;
+let focusRunning = false;
+let focusEndsAt = null;
 
 function setTimeAwareWallpaper(force = false) {
   const hour = new Date().getHours();
@@ -111,6 +132,86 @@ function renderDailyQuote() {
   const dayOfYear = Math.floor((date - startOfYear) / 86400000);
   dailyQuote.textContent = DAILY_REFLECTIONS[(date.getFullYear() + dayOfYear) % DAILY_REFLECTIONS.length];
   activeQuoteDate = dateKey;
+}
+
+function getFocusData() {
+  try { return JSON.parse(localStorage.getItem('focus-dashboard-focus') || '{}'); } catch { return {}; }
+}
+
+function saveFocusData() {
+  localStorage.setItem('focus-dashboard-focus', JSON.stringify({
+    seconds: focusSeconds,
+    duration: focusDuration,
+    running: focusRunning,
+    endsAt: focusEndsAt,
+    title: focusTitle.value,
+    priorities: priorityCheckboxes.map((checkbox, index) => ({ done: checkbox.checked, text: priorityInputs[index].value })),
+    timeline: timelineTimeInputs.map((input, index) => ({ time: input.value, text: timelineTextInputs[index].value }))
+  }));
+}
+
+function renderPriorities() {
+  const completed = priorityCheckboxes.filter(({ checked }) => checked).length;
+  priorityCount.textContent = `${completed} / ${priorityCheckboxes.length}`;
+  progressLabel.textContent = `${completed} of ${priorityCheckboxes.length} priorities complete`;
+  progressFill.style.width = `${completed / priorityCheckboxes.length * 100}%`;
+}
+
+function renderFocusTimer() {
+  const minutes = Math.floor(focusSeconds / 60);
+  const seconds = String(focusSeconds % 60).padStart(2, '0');
+  focusTimer.textContent = `${minutes}:${seconds}`;
+  focusTimer.dateTime = `PT${focusSeconds}S`;
+  timerRing.style.setProperty('--timer-progress', `${(1 - focusSeconds / focusDuration) * 360}deg`);
+  const actionLabel = focusRunning ? 'Pause focus' : focusSeconds === 0 ? 'Start focus again' : 'Start focus';
+  timerToggle.setAttribute('aria-label', actionLabel);
+  timerToggle.innerHTML = focusRunning
+    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>'
+    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 10 7-10 7z"/></svg>';
+}
+
+function renderTimerPresets() {
+  timerPresetButtons.forEach((button) => {
+    const selected = Number(button.dataset.timerPreset) === focusDuration;
+    button.classList.toggle('active', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+}
+
+function tickFocusTimer() {
+  if (!focusRunning || !focusEndsAt) return;
+  focusSeconds = Math.max(0, Math.ceil((focusEndsAt - Date.now()) / 1000));
+  if (focusSeconds === 0) {
+    focusRunning = false;
+    focusEndsAt = null;
+  }
+  renderFocusTimer();
+  saveFocusData();
+}
+
+function loadFocusData() {
+  const saved = getFocusData();
+  if (saved.title) focusTitle.value = saved.title;
+  if (Array.isArray(saved.priorities)) saved.priorities.forEach((priority, index) => {
+    if (!priorityCheckboxes[index]) return;
+    priorityCheckboxes[index].checked = Boolean(priority.done);
+    if (priority.text) priorityInputs[index].value = priority.text;
+  });
+  if (Array.isArray(saved.timeline)) saved.timeline.forEach((item, index) => {
+    if (!timelineTimeInputs[index]) return;
+    if (item.time) timelineTimeInputs[index].value = item.time;
+    if (item.text) timelineTextInputs[index].value = item.text;
+  });
+  if (timerPresetButtons.some((button) => Number(button.dataset.timerPreset) === saved.duration)) focusDuration = saved.duration;
+  if (Number.isFinite(saved.seconds)) focusSeconds = Math.max(0, Math.min(focusDuration, saved.seconds));
+  if (saved.running && Number.isFinite(saved.endsAt) && saved.endsAt > Date.now()) {
+    focusRunning = true;
+    focusEndsAt = saved.endsAt;
+    tickFocusTimer();
+  }
+  renderPriorities();
+  renderTimerPresets();
+  renderFocusTimer();
 }
 
 function setFlipDigit(card, digit) {
@@ -197,6 +298,10 @@ function updateClock() {
   timeEl.dateTime = `${String(hour).padStart(2, '0')}:${minutes}`;
   timeEl.setAttribute('aria-label', `${String(hour % 12 || 12)}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`);
   clockValue.split('').forEach((digit, index) => setFlipDigit(flipCards[index], digit));
+  compactTime.dateTime = `${String(hour).padStart(2, '0')}:${minutes}`;
+  compactTime.setAttribute('aria-label', `${String(hour % 12 || 12)}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`);
+  clockValue.split('').forEach((digit, index) => setFlipDigit(compactFlipCards[index], digit));
+  compactMeridiem.textContent = hour >= 12 ? 'PM' : 'AM';
   secondsEl.dateTime = `PT${seconds}S`;
   seconds.split('').forEach((digit, index) => setFlipDigit(secondsCards[index], digit));
   meridiemEl.textContent = hour >= 12 ? 'PM' : 'AM';
@@ -356,5 +461,43 @@ if (!useSavedLocation()) {
   });
 }
 
-setTimeAwareWallpaper(); renderDailyQuote(); prepareFlipCards(); prepareWorldClockFaces(); updateClock(); renderCalendar(); loadLiveWeather(activeWeatherLocation); setInterval(updateClock, 1000); setInterval(setTimeAwareWallpaper, 60 * 1000); setInterval(renderDailyQuote, 60 * 1000); setInterval(() => loadLiveWeather(activeWeatherLocation), 20 * 60 * 1000);
+timerToggle.addEventListener('click', () => {
+  if (focusRunning) {
+    tickFocusTimer();
+    focusRunning = false;
+    focusEndsAt = null;
+  } else {
+    if (focusSeconds === 0) focusSeconds = focusDuration;
+    focusRunning = true;
+    focusEndsAt = Date.now() + focusSeconds * 1000;
+  }
+  renderFocusTimer();
+  saveFocusData();
+});
+
+timerReset.addEventListener('click', () => {
+  focusSeconds = focusDuration;
+  focusRunning = false;
+  focusEndsAt = null;
+  renderFocusTimer();
+  saveFocusData();
+});
+
+timerPresetButtons.forEach((button) => button.addEventListener('click', () => {
+  focusDuration = Number(button.dataset.timerPreset);
+  focusSeconds = focusDuration;
+  focusRunning = false;
+  focusEndsAt = null;
+  renderTimerPresets();
+  renderFocusTimer();
+  saveFocusData();
+}));
+
+priorityCheckboxes.forEach((checkbox) => checkbox.addEventListener('change', () => { renderPriorities(); saveFocusData(); }));
+priorityInputs.forEach((input) => input.addEventListener('input', saveFocusData));
+timelineTimeInputs.forEach((input) => input.addEventListener('change', saveFocusData));
+timelineTextInputs.forEach((input) => input.addEventListener('input', saveFocusData));
+focusTitle.addEventListener('input', saveFocusData);
+
+setTimeAwareWallpaper(); renderDailyQuote(); prepareFlipCards(); prepareWorldClockFaces(); loadFocusData(); updateClock(); renderCalendar(); loadLiveWeather(activeWeatherLocation); setInterval(updateClock, 1000); setInterval(tickFocusTimer, 1000); setInterval(setTimeAwareWallpaper, 60 * 1000); setInterval(renderDailyQuote, 60 * 1000); setInterval(() => loadLiveWeather(activeWeatherLocation), 20 * 60 * 1000);
 wallpaperShuffle.addEventListener('click', () => setTimeAwareWallpaper(true));

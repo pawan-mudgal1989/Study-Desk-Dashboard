@@ -10,7 +10,7 @@
     <title>Focus Dashboard</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=flip-clock-v4" />
+    <link rel="stylesheet" href="styles.css?v=focus-screen-v12" />
   </head>
   <body>
     <main class="dashboard" aria-label="Focus dashboard">
@@ -78,14 +78,65 @@
           </aside>
         </section>
 
-        <section class="screen future-screen" aria-label="Future screen placeholder">
-          <p>Next screen</p><span>Ready for the next view.</span>
+        <section class="screen focus-screen" aria-label="Today and focus screen">
+          <header class="focus-screen-heading">
+            <div><h1>TODAY</h1><span class="accent-line"></span></div>
+            <div class="compact-clock-wrap" aria-label="Current time">
+              <time id="compactTime" class="compact-flip-clock" aria-label="Current time">
+                <span class="flip-card compact-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-card compact-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="compact-flip-separator" aria-hidden="true">:</span>
+                <span class="flip-card compact-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+                <span class="flip-card compact-flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
+              </time>
+              <span id="compactMeridiem">PM</span>
+            </div>
+          </header>
+
+          <div class="focus-layout">
+            <section class="glass-card timer-card" aria-label="Focus timer">
+              <input class="focus-title-input" id="focusTitle" value="Deep Work" aria-label="Current focus" />
+              <div class="timer-presets" aria-label="Focus duration">
+                <button type="button" data-timer-preset="900">15 min</button>
+                <button type="button" data-timer-preset="1800">30 min</button>
+                <button type="button" data-timer-preset="3000">50 min</button>
+                <button type="button" data-timer-preset="3600">60 min</button>
+              </div>
+              <div class="timer-ring" id="timerRing"><time id="focusTimer" datetime="PT50M">50:00</time></div>
+              <div class="timer-actions">
+                <button class="timer-icon-button" id="timerToggle" type="button" aria-label="Start focus"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 10 7-10 7z"/></svg></button>
+                <button class="timer-reset" id="timerReset" type="button" aria-label="Reset focus timer">↺</button>
+              </div>
+            </section>
+
+            <aside class="focus-side-panel">
+              <section class="glass-card priorities-card" aria-label="Top priorities">
+                <header><p class="section-kicker">TOP PRIORITIES</p><span id="priorityCount">0 / 3</span></header>
+                <label class="priority-row"><input type="checkbox" data-priority="0" /><span class="priority-check" aria-hidden="true"></span><input class="priority-input" data-priority-text="0" value="Plan the most important work" aria-label="Priority 1" /></label>
+                <label class="priority-row"><input type="checkbox" data-priority="1" /><span class="priority-check" aria-hidden="true"></span><input class="priority-input" data-priority-text="1" value="Complete one meaningful task" aria-label="Priority 2" /></label>
+                <label class="priority-row"><input type="checkbox" data-priority="2" /><span class="priority-check" aria-hidden="true"></span><input class="priority-input" data-priority-text="2" value="Prepare tomorrow with clarity" aria-label="Priority 3" /></label>
+              </section>
+
+              <section class="glass-card timeline-card" aria-label="Today's timeline">
+                <header><p class="section-kicker">TODAY'S TIMELINE</p></header>
+                <div class="timeline-row"><input class="timeline-time" data-timeline-time="0" type="time" value="09:00" aria-label="Timeline time 1" /><span></span><input class="timeline-input" data-timeline-text="0" value="Focused work block" aria-label="Timeline item 1" /></div>
+                <div class="timeline-row"><input class="timeline-time" data-timeline-time="1" type="time" value="12:30" aria-label="Timeline time 2" /><span></span><input class="timeline-input" data-timeline-text="1" value="Reset and review" aria-label="Timeline item 2" /></div>
+                <div class="timeline-row"><input class="timeline-time" data-timeline-time="2" type="time" value="14:00" aria-label="Timeline time 3" /><span></span><input class="timeline-input" data-timeline-text="2" value="Priority work" aria-label="Timeline item 3" /></div>
+                <div class="timeline-row"><input class="timeline-time" data-timeline-time="3" type="time" value="17:30" aria-label="Timeline time 4" /><span></span><input class="timeline-input" data-timeline-text="3" value="Close the day" aria-label="Timeline item 4" /></div>
+              </section>
+            </aside>
+          </div>
+
+          <section class="focus-progress glass-card" aria-label="Today progress">
+            <div><p class="section-kicker">TODAY'S PROGRESS</p><strong id="progressLabel">0 of 3 priorities complete</strong></div>
+            <div class="progress-track" aria-hidden="true"><span id="progressFill"></span></div>
+          </section>
         </section>
       </div>
 
-      <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Home screen"></button><button aria-label="Next screen"></button></div>
+      <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Home screen"></button><button aria-label="Today and focus screen"></button></div>
     </main>
-    <script src="app.js?v=flip-clock-v4"></script>
+    <script src="app.js?v=focus-screen-v12"></script>
     <script>
       if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
     </script>
