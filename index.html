@@ -10,7 +10,7 @@
     <title>Focus Dashboard</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=focus-screen-v12" />
+    <link rel="stylesheet" href="styles.css?v=focus-screen-v19" />
   </head>
   <body>
     <main class="dashboard" aria-label="Focus dashboard">
@@ -34,8 +34,8 @@
                 <span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span>
               </time>
               <span class="meridiem-stack"><time id="seconds" class="seconds-card" aria-label="Seconds"><span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span><span class="flip-card" data-digit="0"><span class="flip-top">0</span><span class="flip-bottom">0</span><span class="flip-leaf">0</span><span class="flip-bottom-leaf">0</span></span></time><span id="meridiem">PM</span></span>
+              <p class="date" id="date">Sunday, 6 September</p>
             </div>
-            <p class="date" id="date">Sunday, 6 September</p>
             <section class="world-clocks" aria-label="World clocks">
               <article class="world-clock" data-time-zone="Australia/Sydney">
                 <div class="analog-face" aria-hidden="true"><i class="clock-hand hour-hand"></i><i class="clock-hand minute-hand"></i><i class="clock-hand second-hand"></i><b></b></div>
@@ -136,7 +136,7 @@
 
       <div class="screen-pagination" aria-label="Screen navigation"><button class="active" aria-label="Home screen"></button><button aria-label="Today and focus screen"></button></div>
     </main>
-    <script src="app.js?v=focus-screen-v12"></script>
+    <script src="app.js?v=focus-screen-v19"></script>
     <script>
       if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
     </script>

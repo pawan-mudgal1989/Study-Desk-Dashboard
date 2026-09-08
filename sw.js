@@ -1,9 +1,9 @@
-const CACHE_NAME = "focus-dashboard-v14";
+const CACHE_NAME = "focus-dashboard-v21";
 const APP_SHELL = [
   "./",
   "index.html",
-  "styles.css?v=focus-screen-v12",
-  "app.js?v=focus-screen-v12",
+  "styles.css?v=focus-screen-v19",
+  "app.js?v=focus-screen-v19",
   "assets/mountain-sunset.png",
   "assets/apple-touch-icon.png",
   "assets/icon-192.png",
